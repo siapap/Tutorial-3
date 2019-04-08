@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour
 {
     //spawning
-    public GameObject hazard;
+    public GameObject[] hazards;
     public Vector3 spawnValue;
     public int hazardCount;
     public float spawnWait;
@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
 
     public Text restartText;
     public Text gameOverText;
+    public Text winText;
 
     private bool gameOver;
     private bool restart;
@@ -30,6 +31,7 @@ public class GameController : MonoBehaviour
         restart = false;
         restartText.text = "";
         gameOverText.text = "";
+        winText.text = "";
 
         score = 0;
         UpdateScore();
@@ -40,7 +42,7 @@ public class GameController : MonoBehaviour
     {
         if (restart)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene("Main");
             }
@@ -50,6 +52,8 @@ public class GameController : MonoBehaviour
             Application.Quit();
     }
 
+
+
     IEnumerator SpawnWaves()
     {
         yield return new WaitForSeconds(startWait);
@@ -57,6 +61,7 @@ public class GameController : MonoBehaviour
         {
             for (int i = 0; i < hazardCount; i++)
             {
+                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
                 Vector3 spawnPosition = new Vector3(Random.Range(-spawnValue.x, spawnValue.x), spawnValue.y, spawnValue.z);
                 Quaternion spawnRotation = Quaternion.identity;
 
@@ -68,7 +73,7 @@ public class GameController : MonoBehaviour
 
             if (gameOver)
             {
-                restartText.text = "Press 'R' for Restart";
+                restartText.text = "Press the \n Space bar\n to Restart";
                 restart = true;
                 break;
             }
@@ -84,7 +89,13 @@ public class GameController : MonoBehaviour
 
     void UpdateScore()
     {
-        ScoreText.text = "Score: " + score;
+        ScoreText.text = "Points: " + score;
+        if (score >= 100)
+        {
+            winText.text = "You win! \n Game made by \n Anastasia Papaioanou";
+            gameOver = true;
+            restart = true;
+        }
     }
 
     public void GameOver()
